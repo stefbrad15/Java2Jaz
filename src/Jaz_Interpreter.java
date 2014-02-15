@@ -1,7 +1,15 @@
 import java.io.*;
 import java.util.Scanner;
 import java.util.Stack;
-
+/************************************
+ *                                  *
+ * @author Stefan Bradstreet        *
+ *                                  *
+ *Java Interpreter for the Abstract *
+ *                                  *
+ *Jaz coding language               *
+ *                                  *
+ ************************************/
 public class Jaz_Interpreter {
 
 	public static void main(String[] args) throws IOException{
@@ -9,7 +17,6 @@ public class Jaz_Interpreter {
 		String inFile, line, path;
 		
 		//Object Declarations
-		SymbolTable    ST        = new SymbolTable();
 		Scanner        cIn       = new Scanner(System.in);
 		JazAnalyzer    JA        = new JazAnalyzer();
 		JazExecuter    JE        = new JazExecuter();
@@ -25,12 +32,5 @@ public class Jaz_Interpreter {
 		
 		JazST = JA.getJST();
 		JE.execute(JazST);
-		//JazST.print();
-		
-		//doStuff(" cool stuff");
 	}
-	public static void doStuff(String input){
-		System.out.println("doin stuff" + input);
-	}
-
 }
