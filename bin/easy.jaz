@@ -1,0 +1,15 @@
+show Test Subroutine calls
+lvalue index
+push 5
+:=
+show index equals
+rvalue index
+print
+pop
+call stefan
+show Returned from Stefan
+halt
+
+label stefan
+show Stefan Is Cool
+return
