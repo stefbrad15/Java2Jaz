@@ -25,20 +25,22 @@ public class JazAnalyzer {
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		while((line = br.readLine()) != null){
 			
-			if (line.length() >= 1){   
+			if (line.length() >= 1) //skips over blank lines
+				{   
 				tempIns = new Instruction(line, scope);
 				//monitors scope of routines and subroutines
 				instr   = tempIns.getInstr();
 				param   = tempIns.getParam();
 			
-				if (instr.equals("label")){				
+				if (instr.equals("label")) //changes scope when entering new label
+				{				
 					scope = param;
 					tempIns.setScope(scope);
 				}
 				JST.addCode(tempIns);
 			}
 		}
-		in.close();
+		in.close();  //closes Data Input Stream
 	}
 	
 	public JazSymbolTable getJST() {return JST;}

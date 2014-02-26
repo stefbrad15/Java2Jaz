@@ -1,15 +1,33 @@
 show Test Subroutine calls
-lvalue index
+lvalue i
 push 5
 :=
-show index equals
-rvalue index
+
+begin
+ lvalue p
+ rvalue i
+ :=
+ call stefan
+ lvalue q
+ rvalue p
+ :=
+end
+rvalue q
+show rvalue q should equal 10
 print
-pop
-call stefan
-show Returned from Stefan
+show rvalue i equals
+rvalue i
+print
 halt
 
 label stefan
-show Stefan Is Cool
+ show in stefan p equals
+ lvalue p
+ rvalue p
+ push 5
+ +
+ :=
+ rvalue p
+ show p should now = 10
+ print
 return

@@ -4,13 +4,13 @@ push 5
 :=
 
 begin
-	lvalue n
-	rvalue a
-	:=
-	call factorial
-	lvalue ret
-	rvalue n1
-	:=
+ lvalue n
+ rvalue a
+ :=
+ call factorial
+ lvalue ret
+ rvalue n1
+ :=
 end
 
 show Factorial of 
@@ -28,15 +28,15 @@ rvalue n
 gofalse final
 
 begin
-	lvalue n
-	rvalue n
-	push 1
-	-
-	:=
-      call factorial
-	lvalue ret
-	rvalue n1
-	:=
+ lvalue n
+ rvalue n
+ push 1
+ -
+ :=
+ call factorial
+  lvalue ret
+  rvalue n1
+  :=
 end
 lvalue n1
 rvalue ret
@@ -50,11 +50,4 @@ lvalue n1
 push 1
 :=
 return
-/* 
- [jdec@localhost morejazfiles]$ ./jaz recFact.jaz
-	Computes Factorial 
- Factorial of 
- 5
- equals
- 120
- */ 
+

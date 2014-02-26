@@ -33,6 +33,8 @@ halt
 label fact
   show function fact prototype may be seen as
   show fact( INOUT t; IN i )
+  rvalue i
+  rvalue t
   label loop
   rvalue i
   push 1
@@ -43,6 +45,7 @@ label fact
   rvalue i
   *
   :=
+
   lvalue i
   rvalue i
   push 1

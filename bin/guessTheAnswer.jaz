@@ -5,7 +5,6 @@ lvalue Sub::x
 rvalue Sub::x
 rvalue Sub::y
 -
-print
 :=
 return
 label 2
@@ -39,11 +38,9 @@ push 2
 begin
   lvalue Sub::x
   rvalue ::j
-  print
   :=
   lvalue Sub::y
   push 1
-  print
   :=
   call 1
   lvalue ::j

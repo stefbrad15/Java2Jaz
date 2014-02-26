@@ -5,19 +5,28 @@ import java.util.Stack;
 import java.math.BigInteger;
 
 public class JazExecuter {
+	//variable declarations
 	private String instruction, parameter, scope, lval, toPop;
 	private String [] tokenized;
+	private int top, bot, codeLine,level, prevLevel;
+	private boolean returning, passing;
+		
+	//Object Declarations
 	private Stack<String> memStack;
-	//private DataHolder DH;
-	private HashMap<String, variableParams> DH = new HashMap<String, variableParams>();
-	private int top, bot, codeLine,level;
+	private HashMap<String, variableParams> DH; 
+	private variableParams var;
 	private Instruction curCode;
+	
+	//Default Constructor
 	JazExecuter(){
-		memStack = new Stack();
-//		DH       = new DataHolder();
-		codeLine = 0;
+		memStack  = new Stack<String>();
+		DH        = new HashMap<String, variableParams>();
+		var       = new variableParams("",0,"");
+		codeLine  = 0;
+		returning = false;
+		passing   = false;
 	}
-	private variableParams var = new variableParams("",0,"");
+	
 
 	public void execute(JazSymbolTable TableIn){
 		TableIn.setTableI(codeLine);
@@ -25,7 +34,8 @@ public class JazExecuter {
 		instruction = curCode.getInstr();
 		parameter   = curCode.getParam();
 		scope = curCode.getScope();
-		level = 0;
+		level = 0; //keeps track of begin and return call
+		
 		while(!instruction.equals("halt")){
 
 			switch(instruction){
@@ -34,30 +44,43 @@ public class JazExecuter {
 				case   "lvalue" :
 					memStack.push(parameter); break;
 				case   "rvalue" :  
-					if (DH.get(parameter + " "+ scope)== null & DH.get(parameter + " "+ level)== null){
-						var = new variableParams(scope,level,"0");
-						DH.put(parameter+ " " +scope, var);
-						var = new variableParams(scope,level,"0");
-						DH.put(parameter+ " " +level, var);
-						memStack.push("0");} //initializes variable and pushes 0
-					else {
-						if(DH.get(parameter+" " +scope) == null){
-							var=(variableParams) DH.get(parameter+ " " + level);
+					//checks instance of variable when returning from a subroutine
+					if (returning == true){
+						var=(variableParams) DH.get( parameter + " " + prevLevel);
+						memStack.push(var.getVal());
+					}
+					//initializes variable and pushes 0	 
+					else if (DH.get(parameter + " "+ scope)== null & DH.get(parameter + " "+ level)== null){						
+						if (DH.get(parameter + " "+ prevLevel) != null && passing){
+							var=(variableParams) DH.get( parameter + " " + prevLevel);
+							memStack.push(var.getVal());
 						}
 						else{
-							var=(variableParams) DH.get(parameter+ " " + scope);
+							var = new variableParams(scope,level,"0");
+							DH.put(parameter+ " " +scope, var);
+							var = new variableParams(scope,level,"0");
+							DH.put(parameter+ " " +level, var);
+							memStack.push("0");
+						 }
+						} 
+					else {
+						if(DH.get( parameter + " " + scope ) == null){
+							var=(variableParams) DH.get( parameter + " " + level);
+						}
+						else{
+							var=(variableParams) DH.get( parameter + " " + scope);
 						}
 						memStack.push(var.getVal());  //pushes value of memory location to stack
 					} 
+					
 					break; //initializes a variable to 0
 				case   "pop"    :  memStack.pop(); break;
 				case   ":="     : 
 					parameter = memStack.pop();
 					lval      = memStack.pop();		
 					var = new variableParams(scope,level,parameter);
-					DH.put(lval+ " " +scope, var);
-					var = new variableParams(scope,level,parameter);
-					DH.put(lval + " " + level, var);
+					DH.put(lval + " " + scope, var);					
+					DH.put(lval + " " + level, var); //creates an instance of the variable by scope and level
 					break;
 				case   "copy"   :  memStack.push(memStack.peek()); break;
 
@@ -102,13 +125,14 @@ public class JazExecuter {
 					else System.out.println(parameter); break;
 
 				//Subprogram Control
-				case   "begin"      :  //step through; 
-					if(level==0){
+				case   "begin"  : 
+						passing = true;
 						level++;	
-					}
 					break;
-				case   "end"        :  //step through; 
-					level--;
+					
+				case   "end"    :
+					returning = false;
+					//level--;
 					if (level == 0){
 						
 						for(Entry<String, variableParams> entry : DH.entrySet()) {
@@ -116,30 +140,35 @@ public class JazExecuter {
 						    variableParams value = entry.getValue();
 						    try{
 							    if(value.getVal() != null){
-								    if(value.getLevel() == 1){
+								    if(value.getLevel() == prevLevel){
 								    	//DH.remove(key);
 								    	DH.put(key, null);
 								    }
 								}
 						    }
 						    catch(NullPointerException e){
-						    	// Catching vars that have already been nulled
-						    	
+						    	// Catching vars that have already been nulled						    	
 						    }
 						}
 					}
 					break;
 				case   "return"     :  
+					/*
 					for(Entry<String, variableParams> entry : DH.entrySet()) {
 					    String key = entry.getKey();
 					    variableParams value = entry.getValue();
 					    if(value.getScope()==scope){
-					    	DH.put(key, null);
+					    	DH.put(key, null); //clears variables local to that scope
 					    }
 					}
+					*/
+					prevLevel = level;
+					returning = true;
+					level--;
 					TableIn.callReturn(); 
 					break;
 				case   "call"       :  
+					passing = false;
 					TableIn.initReturnLine();
 					TableIn.findScope(parameter); break;
 
@@ -197,15 +226,5 @@ public class JazExecuter {
 			default         :  System.out.println("Invalid op"); break;
 		}
 		memStack.push(Integer.toString(top));			
-	}
-	public static boolean isInteger(String s) {
-	    try { 
-	        Integer.parseInt(s); 
-	        return true;
-	    } catch(NumberFormatException e) { 
-	        return false; 
-	    }
-	    // only got here if we didn't return false
-
 	}
 }

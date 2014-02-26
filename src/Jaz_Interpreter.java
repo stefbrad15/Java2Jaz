@@ -5,6 +5,8 @@ import java.util.Stack;
  *                                  *
  * @author Stefan Bradstreet        *
  *                                  *
+ * @coauthor Dennis Warne           *
+ *                                  *
  *Java Interpreter for the Abstract *
  *                                  *
  *Jaz coding language               *
@@ -26,11 +28,9 @@ public class Jaz_Interpreter {
 		inFile = cIn.nextLine();
 		path = "src/" + inFile;
 		System.out.println("Reading in:" + inFile);
-		
-		//Populates JazSymbolTable from Jaz file
-		JA.Analyze(path);
-		
-		JazST = JA.getJST();
-		JE.execute(JazST);
+			
+		JA.Analyze(path);	          //Populates JazSymbolTable from Jaz file	
+		JazST = JA.getJST();          //Stores Symbol Table in JazST
+		JE.execute(JazST);            //Executes the interpretted jaz file
 	}
 }
