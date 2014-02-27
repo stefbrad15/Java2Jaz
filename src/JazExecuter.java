@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.math.BigInteger;
@@ -12,6 +13,7 @@ public class JazExecuter {
 	private boolean returning, passing;
 		
 	//Object Declarations
+	Scanner        conIn       = new Scanner(System.in);
 	private Stack<String> memStack;
 	private HashMap<String, variableParams> DH; 
 	private variableParams var;
@@ -64,11 +66,11 @@ public class JazExecuter {
 						 }
 						} 
 					else {
-						if(DH.get( parameter + " " + scope ) == null){
-							var=(variableParams) DH.get( parameter + " " + level);
+						if( DH.get( parameter + " " + level) == null){
+							var=(variableParams) DH.get( parameter + " " + scope);
 						}
 						else{
-							var=(variableParams) DH.get( parameter + " " + scope);
+							var=(variableParams) DH.get( parameter + " " + level);
 						}
 						memStack.push(var.getVal());  //pushes value of memory location to stack
 					} 
@@ -79,8 +81,9 @@ public class JazExecuter {
 					parameter = memStack.pop();
 					lval      = memStack.pop();		
 					var = new variableParams(scope,level,parameter);
-					DH.put(lval + " " + scope, var);					
-					DH.put(lval + " " + level, var); //creates an instance of the variable by scope and level
+					DH.put(lval + " " + scope, var);		//creates a local instance of a variable			
+					DH.put(lval + " " + level, var);        //creates an instance by level for variable passing
+					DH.put(lval + " " + level + scope, var);//creates an instance of the variable for recursion
 					break;
 				case   "copy"   :  memStack.push(memStack.peek()); break;
 
@@ -93,6 +96,9 @@ public class JazExecuter {
 					if (memStack.pop().equals("0")) TableIn.findScope(parameter); break;
 				case   "gotrue"  : 
 					if (!memStack.pop().equals("0")) TableIn.findScope(parameter); break;
+				case   "pause"   : 
+					System.out.println("Program Paused-hit enter ");
+					String pause = conIn.nextLine(); break;	
 				case   "halt"    :  System.exit(0); break;
 
 				//Arithmetic Operators
@@ -127,6 +133,7 @@ public class JazExecuter {
 				//Subprogram Control
 				case   "begin"  : 
 						passing = true;
+						prevLevel = level;
 						level++;	
 					break;
 					

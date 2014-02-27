@@ -30,7 +30,7 @@ gofalse final
 begin
  lvalue n
  rvalue n
- push 1
+ push 1 
  -
  :=
  call factorial
@@ -46,6 +46,7 @@ rvalue n
 return
 
 label final
+show in final
 lvalue n1
 push 1
 :=

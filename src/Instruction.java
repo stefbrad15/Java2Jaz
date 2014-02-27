@@ -13,6 +13,7 @@ public class Instruction {
 		
 		do{
 			instr      = tokenized[whiteSpace];
+			instr = instr.replaceAll("\t","");
 			whiteSpace++; 
 		} while (instr.length() == 0);
 		

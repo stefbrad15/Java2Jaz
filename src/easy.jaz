@@ -4,13 +4,13 @@ push 5
 :=
 
 begin
- lvalue p
- rvalue i
- :=
- call stefan
- lvalue q
- rvalue p
- :=
+	lvalue p
+	rvalue i
+	:=
+	call stefan
+	lvalue q
+	rvalue p
+	:=
 end
 rvalue q
 show rvalue q should equal 10
